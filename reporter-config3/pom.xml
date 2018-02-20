@@ -20,12 +20,13 @@
         <version>3.0.3</version>
     </parent>
 
+    <groupId>com.vorstella</groupId>
     <artifactId>reporter-config3</artifactId>
     <name>metrics reporter config 3.x</name>
-    <description />
+    <description>This project modifies the com.addthis.metrics module of the same name. It adds configuration for a Kafka reporter.</description>
     <dependencies>
         <dependency>
-            <groupId>com.addthis.metrics</groupId>
+            <groupId>com.vorstella</groupId>
             <artifactId>reporter-config-base</artifactId>
             <version>3.0.3</version>
         </dependency>
@@ -107,12 +108,30 @@
         </dependency>
         <!-- kafka -->
 	    <dependency>
-	      <groupId>com.github.mstump</groupId>
-	      <artifactId>metrics-kafka</artifactId>
-          <version>c804bf1874</version>
-          <optional>true</optional>
-		  <scope>compile</scope>
+            <groupId>com.vorstella</groupId>
+            <artifactId>metrics-kafka</artifactId>
+            <version>0.0.1</version>
+            <optional>true</optional>
+            <scope>compile</scope>
 	    </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- check for known vulnerabilities in dependencies -->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
