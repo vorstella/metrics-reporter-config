@@ -24,12 +24,12 @@
     <version>3.4.0</version>
   </parent>
 
-  <groupId>com.addthis.metrics</groupId>
+  <groupId>com.vorstella</groupId>
   <artifactId>reporter-config-parent</artifactId>
   <version>3.0.3</version>
   <packaging>pom</packaging>
   <name>Metrics Reporter Config</name>
-  <url>https://github.com/addthis/metrics-reporter-config</url>
+  <url>https://github.com/vorstella/metrics-reporter-config</url>
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -37,17 +37,38 @@
     </license>
   </licenses>
 
+  <developers>
+    <developer>
+      <id>mstump</id>
+      <name>Matthew Stump</name>
+      <email>matt@vorstella.com</email>
+    </developer>    
+    <developer>
+      <id>dgillman</id>
+      <name>Duffy Gillman</name>
+      <email>duffy@vorstella.com</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git@github.com:vorstella/metrics-reporter-config.git</connection>
+    <developerConnection>scm:git:git@github.com:vorstella/metrics-reporter-config.git</developerConnection>
+    <url>https://github.com/vorstella/metrics-reporter-config</url>
+  </scm>
+
   <modules>
     <module>reporter-config-base</module>
-    <module>reporter-config2</module>
     <module>reporter-config3</module>
   </modules>
 
   <properties>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <java.version>1.8</java.version>
     <dep.metrics2.version>2.2.0</dep.metrics2.version>
     <dep.metrics3.version>3.1.0</dep.metrics3.version>
     <dep.metrics-statsd.version>4.1.2</dep.metrics-statsd.version>
-    <project.build.targetJdk>1.7</project.build.targetJdk>
+    <project.build.targetJdk>1.8</project.build.targetJdk>
     <prometheus.version>0.0.16</prometheus.version>
   </properties>
 
@@ -126,11 +147,10 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    <!-- kafka reporter -->
-	<repository>
-	  <id>jitpack.io</id>
-	  <url>https://jitpack.io</url>
-	</repository>
+    <repository>
+      <id>sonatype</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
     <!-- riemann reporter -->
     <repository>
       <id>clojars.org</id>
@@ -147,11 +167,93 @@
     </repository>
   </repositories>
 
-  <scm>
-    <connection>scm:git:git@github.com:addthis/metrics-reporter-config.git</connection>
-    <developerConnection>scm:git:git@github.com:addthis/metrics-reporter-config.git</developerConnection>
-    <url>https://github.com/addthis/metrics-reporter-config</url>
-    <tag>v3.0.3</tag>
-  </scm>
+  <build>
+    <plugins>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <additionalparam>-Xdoclint:none</additionalparam>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- check for known vulnerabilities in dependencies -->
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <!-- require explicit release to production -->
+          <autoReleaseAfterClose>false</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <name>Sonatype Staging Repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+  </distributionManagement>
 
 </project>
